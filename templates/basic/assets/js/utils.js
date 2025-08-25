@@ -20,6 +20,13 @@ const _utl = {
     //Replace content of a container
     html : (t, cont) =>{
         t.innerHTML = cont;
+
+        var title = t.querySelector('title');
+        if(title){
+            document.querySelector('head>title').innerHTML = title.innerHTML;
+            title.remove();
+        }
+
         var scrpts = t.querySelectorAll('script');
         if(scrpts.length){
             scrpts.forEach((s)=>{
