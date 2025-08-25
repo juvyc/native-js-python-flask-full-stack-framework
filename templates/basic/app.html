@@ -4,12 +4,14 @@
 
     <script>
         var currentEndPoint = "{{ current_path }}";
+        const securitySalt = "";
     </script>
 
     <title>{{ page_title }}</title>
 
     <link rel="stylesheet" href="{{ url_for('static', filename='css/main.css') }}">
 
+    <script src="{{ url_for('static', filename='js/baseSecurity.js') }}"></script>
     <script src="{{ url_for('static', filename='js/baseApp.js') }}"></script>
     <script src="{{ url_for('static', filename='js/utils.js') }}"></script>
 
