@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+
+    <script>
+        var currentEndPoint = "{{ current_path }}";
+    </script>
+
+    <title>{{ page_title }}</title>
+
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/main.css') }}">
+
+    <script src="{{ url_for('static', filename='js/baseApp.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/utils.js') }}"></script>
+
+    <!--Load templates-->
+    {% for tpl in template_parts %}
+        <script type="text/tmplt" data-name="{{ tpl }}">{{ template_parts[tpl]|safe }}</script>
+    {% endfor %}
+
+    <!--Load all controllers here-->
+    {% for clr in template_controllers %}
+        <script>{{ template_controllers[clr]|safe }}</script>
+    {% endfor %}
+
+</head>
+<body>
+    
+    <div id="baseApp"></div>
+
+    <script>
+        new baseApp('#baseApp');
+    </script>
+    
+</body>
+</html>
