@@ -4,7 +4,7 @@
 
     <script>
         var currentEndPoint = "{{ current_path }}";
-        const securitySalt = "";
+        const securitySalt = "{{ security_salt }}";
     </script>
 
     <title>{{ page_title }}</title>
@@ -15,11 +15,6 @@
     <script src="{{ url_for('static', filename='js/baseApp.js') }}"></script>
     <script src="{{ url_for('static', filename='js/utils.js') }}"></script>
 
-    <!--Load templates-->
-    {% for tpl in template_parts %}
-        <script type="text/tmplt" data-name="{{ tpl }}">{{ template_parts[tpl]|safe }}</script>
-    {% endfor %}
-
     <!--Load all controllers here-->
     {% for clr in template_controllers %}
         <script>{{ template_controllers[clr]|safe }}</script>
@@ -27,6 +22,11 @@
 
 </head>
 <body>
+
+     <!--Load templates-->
+    {% for tpl in template_parts %}
+        <script type="text/tmplt" data-name="{{ tpl }}">{{ template_parts[tpl]|safe }}</script>
+    {% endfor %}
     
     <div id="baseApp"></div>
 

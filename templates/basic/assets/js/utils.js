@@ -49,9 +49,10 @@ const _utl = {
     },
 
     //Get template content
-    getTmplt : (tmptn) => {
-        var _c = document.querySelector('[data-name="'+ tmptn +'"]');
-        if(_c) return _c.innerHTML;
+    getTmplt : async (tmptn) => {
+        tmptn = btoa(tmptn).replace(/=/i, '');
+        var _c = await document.querySelector('[data-name="'+ tmptn +'"]');
+        if(_c) return await atob(_c.innerHTML);
         else return false;
     },
 

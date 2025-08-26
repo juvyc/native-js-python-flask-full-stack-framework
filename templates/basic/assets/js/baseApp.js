@@ -30,6 +30,7 @@ class baseApp
 window.addEventListener("popstate", (e) => {
     if(e.state){
         var _path = window.location.pathname;
+        console.log(_path);
         _path = _path.split('?')[0];
         _utl.goto(_path);
     }

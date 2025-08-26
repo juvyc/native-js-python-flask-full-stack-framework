@@ -1,5 +1,21 @@
-from flask import Flask, render_template as render, request
-import glob
+from flask import Flask, render_template as render, request, redirect
+import glob, hashlib, base64, datetime
+import psycopg2 as pgsql_dbengine
+
+#Initialize database connection
+conn = pgsql_dbengine.connect(database="studportal", user="postgres",
+                        password="root", host="localhost", port="5432")
+
+#global variable
+global_security_salt = False
+
+#security salt generator
+def generate_security_salt():
+    dt = str(datetime.datetime.now())
+    security_salt = hashlib.shake_256(dt.encode())
+    security_salt = security_salt.hexdigest(40).encode()
+    return base64.b64encode(security_salt).decode().replace('=', '')
+
 
 #set useable teplate
 use_template = 'basic'
@@ -21,8 +37,9 @@ for path in glob.glob(template_parts_path, recursive=True):
             #remove relative path
             keyn = path.replace('templates/' + use_template + '/parts\\', '')
             keyn = keyn.replace('\\', '/')
+            keyn = base64.b64encode(keyn.encode()).decode().replace('=', '')
             #pass to lists of template parts
-            list_template_parts[keyn] = fcontent
+            list_template_parts[keyn] = base64.b64encode(fcontent.encode()).decode()
 
 #Load all templates controller files
 template_controllers_path = 'templates/' + use_template + '/controllers/**'
@@ -43,18 +60,35 @@ params = {}
 params['template_parts'] = list_template_parts
 params['template_controllers'] = list_template_controllers
 
-#FrontEnd controller
+#Router controller
 @app.route("/")
 @app.route("/<slug>")
 @app.route("/<slug>/<slug2>")
 @app.route("/<slug>/<slug2>/<slug3>")
 def route_engine(slug = False, slug2=False, slug3=False):
+    #Refresh security salt every touches on the server side
+    params['security_salt'] = global_security_salt = generate_security_salt()
+
     #pass the current path to view
     params['current_path'] = request.path
     #Page title
-    params['page_title'] = "Student Portal"
+    #params['page_title'] = "Welcome to Student Portal"
+
+    #Require login authenticaiton when accessing login
+    if slug == 'admin' and not auth():
+        return redirect("/login", code=302)
+
+    #Close database connection
+    conn.close()
+
     #Render the base view
     return render('/app.html',  **params)
+
+#Login security checker
+@app.route("/auth")
+def auth():
+    return False
+
 
 #Start the app
 if __name__ == '__main__':
