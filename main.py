@@ -85,9 +85,14 @@ def route_engine(slug = False, slug2=False, slug3=False):
     return render('/app.html',  **params)
 
 #Login security checker
-@app.route("/auth")
 def auth():
     return False
+
+@app.route("/auth/check", methods=['POST'])
+def checkAuth():
+    return {
+        'status' : auth()
+    }
 
 
 #Start the app

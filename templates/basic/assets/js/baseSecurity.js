@@ -6,9 +6,11 @@ class baseSecurity
     }
 
     //Display template if secure
-    secure(fnc)
+    async secure(fnc)
     {
-        if(!this.isAuthorized()){
+        const isauth = await this.isAuthorized();
+
+        if(!isauth){
             _utl.goto(this._redirectTo);
         }else{
             fnc();
@@ -16,9 +18,10 @@ class baseSecurity
     }
 
     //Display template if not secure
-    notsecure(fnc)
+    async notsecure(fnc)
     {
-        if(this.isAuthorized()){
+        const isauth = await this.isAuthorized();
+        if(isauth){
             _utl.goto(this._redirectTo);
         }else{
             fnc();
@@ -26,9 +29,14 @@ class baseSecurity
     }
 
     //Check if authorized
-    isAuthorized()
+    async isAuthorized()
     {
-        return false;
+        const checkauth = await fetch('/auth/check', {
+            method: "POST"
+        });
+
+        const rs = await checkauth.json();
+        return rs.status;
     }
 
     //set Authorization
