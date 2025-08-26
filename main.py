@@ -84,7 +84,12 @@ def route_engine(slug = False, slug2=False, slug3=False):
     #Render the base view
     return render('/app.html',  **params)
 
+
+'''
 #Login security checker
+Implement some codes inside the auth function that validate the user if authenticated or not
+it must return True or False only
+'''
 def auth():
     return False
 
