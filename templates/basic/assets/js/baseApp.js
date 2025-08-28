@@ -15,10 +15,10 @@ class baseApp
         this.elem_target = _target;
     }
 
-    renderer(t){
+    async renderer(t){
         if(t){
             if(typeof paths[currentEndPoint] != 'undefined'){
-                paths[currentEndPoint](t);
+                await paths[currentEndPoint](t);
             }else{
                 t.innerHTML = '404 Not Found!';
             }

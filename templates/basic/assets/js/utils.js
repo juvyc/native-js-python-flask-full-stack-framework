@@ -69,5 +69,16 @@ const _utl = {
         new baseApp(baseWrp);
 
         return false;
+    },
+
+    fetch_data : async (url, tc)=>{
+        const getdata = await fetch(url, {
+            method: "PUT"
+        });
+
+        const rs = await getdata.text();
+
+        if(rs) document.querySelector((tc ? tc : '[data-container]')).innerHTML = rs;
+        else console.log('Request route ' + url + ' has no response');
     }
 };
