@@ -19,6 +19,8 @@ class baseApp
         if(t){
             if(typeof paths[currentEndPoint] != 'undefined'){
                 await paths[currentEndPoint](t);
+            }else if(typeof paths['/_m_'] != 'undefined'){
+                await paths['/_m_'](t);
             }else{
                 t.innerHTML = '404 Not Found!';
             }
@@ -28,10 +30,8 @@ class baseApp
 
 //Watch the back and forth browser button
 window.addEventListener("popstate", (e) => {
-    if(e.state){
-        var _path = window.location.pathname;
-        console.log(_path);
-        _path = _path.split('?')[0];
-        _utl.goto(_path);
-    }
+    var _path = window.location.pathname;
+    var _turi = _path.split('?')[0];
+    currentEndPoint = _turi;
+    new baseApp(baseWrp);
 });

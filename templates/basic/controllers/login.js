@@ -1,5 +1,5 @@
 /**
-@path "/", login path
+@path "/login", login path
 */
 
 paths['/login'] = async (t) => {

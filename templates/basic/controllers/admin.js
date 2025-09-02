@@ -1,5 +1,5 @@
 /**
-@path "/", admin dashboard path
+@path "/admin", admin dashboard path
 */
 
 paths['/admin'] = async (t) => {

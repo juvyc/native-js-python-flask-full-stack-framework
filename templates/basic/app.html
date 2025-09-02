@@ -26,12 +26,12 @@
 </head>
 <body>
 
-     <!--Load templates-->
+    <!--Load templates-->
     {% for tpl in template_parts %}
         <script type="text/tmplt" data-name="{{ tpl }}">{{ template_parts[tpl]|safe }}</script>
     {% endfor %}
     
-    <div id="baseApp"></div>
+    <div id="baseApp">{% block content %}{% endblock %}</div>
 
     <script>
         new baseApp('#baseApp');

@@ -1,6 +1,6 @@
 import sys, os
 from conn import conn
-from flask import Flask, render_template as render, request, redirect, make_response
+from flask import Flask, render_template as render, request, redirect
 import glob, hashlib, base64, datetime
 
 #set templates directory
@@ -74,7 +74,16 @@ params['template_controllers'] = list_template_controllers
 @app.route("/<slug>", methods=['GET', 'POST', 'PUT'])
 @app.route("/<slug>/<slug2>", methods=['GET', 'POST', 'PUT'])
 @app.route("/<slug>/<slug2>/<slug3>", methods=['GET', 'POST', 'PUT'])
-def route_engine(slug = False, slug2=False, slug3=False):
+@app.route("/<slug>/<slug2>/<slug3>/<slug4>", methods=['GET', 'POST', 'PUT'])
+def route_engine(**kwargs):
+    args = {**locals()}
+    params['args'] = args
+
+    slugs = []
+    if len(args['kwargs'].keys()) > 0:
+        slugs = list(args['kwargs'].values())
+
+    #print(slugs)
 
     params['method'] = request.method
 
@@ -86,25 +95,32 @@ def route_engine(slug = False, slug2=False, slug3=False):
     #Page title
     #params['page_title'] = "Welcome to Student Portal"
 
-    #Require login authenticaiton when accessing login
-    if slug == 'admin' and not auth():
-        return redirect("/login", code=302)
-
     #Render dynamic template when request method is PUT
-    if request.method == 'PUT' and request.args.get('ft'):
-        #get target module name
-        modname = request.args.get('ft').replace('/', '.')
-        #print(modname)
-        #target module
-        tmod = __import__(modname, fromlist=['__init__'])
-        #run init function of the target module
-        tmod.__init__(params)
+    if len(slugs) > 0:
+        #print('.'.join(slugs))
+        modname = '.'.join(slugs)
 
-         #Close database connection
-        conn.close()
+        #print(modname);
+        try:
+            #Pass exeception as the test is a built in module of the python
+            if modname.lower() == 'test':
+                raise Exception("Python reserve term!")
+            
+            tmod = __import__(modname, fromlist=['__init__'])
+            return tmod.__init__(params, render)
+        except ModuleNotFoundError:
+            try:
+                tmod = __import__("_m_", fromlist=['__init__'])
+                fret = tmod.__init__(params, render)
 
-        #Finally render dynamic templates
-        return render('/fetches/' + request.args.get('ft') + '.html',  **params)
+                if fret is not None:
+                    return fret
+                else:
+                    raise Exception("Not found")
+            except:
+                return render('/404.html'), 404
+        except:
+            return render('/404.html'), 404
 
     #Close database connection
     conn.close()
