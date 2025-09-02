@@ -1,1 +1,7 @@
-{{ home_content }}
+{% if method != 'PUT' %}
+    {% extends 'app.html' %}
+{% endif %}
+
+{% block content %}
+    Testing {{ home_content }}
+{% endblock %}

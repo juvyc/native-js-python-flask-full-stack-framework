@@ -82,8 +82,10 @@ def route_engine(**kwargs):
     slugs = []
     if len(args['kwargs'].keys()) > 0:
         slugs = list(args['kwargs'].values())
+    else:
+        slugs.append('home')
 
-    #print(slugs)
+    print(slugs)
 
     params['method'] = request.method
 
@@ -121,13 +123,6 @@ def route_engine(**kwargs):
                 return render('/404.html'), 404
         except:
             return render('/404.html'), 404
-
-    #Close database connection
-    conn.close()
-
-    #Render the base view
-    return render('/app.html',  **params)
-
 
 '''
 #Login security checker
