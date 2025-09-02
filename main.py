@@ -70,11 +70,11 @@ params['template_parts'] = list_template_parts
 params['template_controllers'] = list_template_controllers
 
 #Router controller
-@app.route("/", methods=['GET', 'POST', 'PUT'])
-@app.route("/<slug>", methods=['GET', 'POST', 'PUT'])
-@app.route("/<slug>/<slug2>", methods=['GET', 'POST', 'PUT'])
-@app.route("/<slug>/<slug2>/<slug3>", methods=['GET', 'POST', 'PUT'])
-@app.route("/<slug>/<slug2>/<slug3>/<slug4>", methods=['GET', 'POST', 'PUT'])
+@app.route("/", methods=['GET', 'POST', 'PUT', 'PATCH'])
+@app.route("/<slug>", methods=['GET', 'POST', 'PUT', 'PATCH'])
+@app.route("/<slug>/<slug2>", methods=['GET', 'POST', 'PUT', 'PATCH'])
+@app.route("/<slug>/<slug2>/<slug3>", methods=['GET', 'POST', 'PUT', 'PATCH'])
+@app.route("/<slug>/<slug2>/<slug3>/<slug4>", methods=['GET', 'POST', 'PUT', 'PATCH'])
 def route_engine(**kwargs):
     args = {**locals()}
     params['args'] = args

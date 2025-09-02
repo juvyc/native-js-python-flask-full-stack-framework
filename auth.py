@@ -1,2 +1,2 @@
-def auth():
-    pass
+def exec():
+    return {'status' : False}
