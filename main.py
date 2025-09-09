@@ -6,7 +6,7 @@ import glob, hashlib, base64, datetime
 #set templates directory
 templates = "templates/"
 #set useable teplate
-use_template = 'basic'
+use_template = 'awonsa'
 
 #Integrating fetches modules
 sys.path.append(os.path.join(os.path.dirname(__file__), templates + use_template + '/fetches/'))
@@ -35,39 +35,10 @@ app = Flask(__name__,
     static_folder=templates + use_template + '/assets' #keep the assets secret
 )
 
-#Load all templates parts files
-template_parts_path = templates + use_template + '/parts/**'
-list_template_parts = {}
-for path in glob.glob(template_parts_path, recursive=True):
-    if path.endswith(".html"):
-        with open(path) as f: 
-            #get file content
-            fcontent = f.read()
-            #remove relative path
-            keyn = path.replace(templates + use_template + '/parts\\', '')
-            keyn = keyn.replace('\\', '/')
-            keyn = base64.b64encode(keyn.encode()).decode().replace('=', '')
-            #pass to lists of template parts
-            list_template_parts[keyn] = base64.b64encode(fcontent.encode()).decode()
-
-#Load all templates controller files
-template_controllers_path = templates + use_template + '/controllers/**'
-list_template_controllers = {}
-for path in glob.glob(template_controllers_path, recursive=True):
-    if path.endswith(".js"):
-        with open(path) as f: 
-            #get file content
-            fcontent = f.read()
-            #remove relative path
-            keyn = path.replace(templates + use_template + '/controllers\\', '')
-            keyn = keyn.replace('\\', '/')
-            #pass to lists of controllers
-            list_template_controllers[keyn] = fcontent
-
 params = {}
 
-params['template_parts'] = list_template_parts
-params['template_controllers'] = list_template_controllers
+#params['template_parts'] = list_template_parts
+#params['template_controllers'] = list_template_controllers
 
 #Router controller
 @app.route("/", methods=['GET', 'POST', 'PUT', 'PATCH'])
@@ -85,7 +56,6 @@ def route_engine(**kwargs):
     else:
         slugs.append('home')
 
-    print(slugs)
 
     params['method'] = request.method
 
@@ -97,6 +67,11 @@ def route_engine(**kwargs):
     #Page title
     #params['page_title'] = "Welcome to Student Portal"
 
+    #Integrate the pre loaded templates to params
+    preLoadTmplts = preLoadedControllerTemplates(params)
+    params['template_parts'] = preLoadTmplts['list_template_parts']
+    params['template_controllers'] = preLoadTmplts['list_template_controllers']
+
     #Render dynamic template when request method is PUT
     if len(slugs) > 0:
         #print('.'.join(slugs))
@@ -107,7 +82,7 @@ def route_engine(**kwargs):
             #Pass exeception as the test is a built in module of the python
             if modname.lower() == 'test':
                 raise Exception("Python reserve term!")
-            
+
             tmod = __import__(modname, fromlist=['__init__'])
             return tmod.__init__(params, render)
         except ModuleNotFoundError:
@@ -124,21 +99,35 @@ def route_engine(**kwargs):
         except:
             return render('/404.html'), 404
 
-'''
-#Login security checker
-Implement some codes inside the auth function that validate the user if authenticated or not
-it must return True or False only
-'''
-def auth():
-    return False
+def preLoadedControllerTemplates(params={}):
+    #Load all templates parts files
+    template_parts_path = templates + use_template + '/parts/**'
+    list_template_parts = {}
+    for path in glob.glob(template_parts_path, recursive=True):
+        if path.endswith(".html"):
+            keyn = path.replace(templates + use_template + '/parts\\', '')
+            keyn = keyn.replace('\\', '/')
+            #Get file content
+            fcontent = render('parts/' + keyn, **params)
+            keyn = base64.b64encode(keyn.encode()).decode().replace('=', '')
+            #pass to lists of template parts
+            list_template_parts[keyn] = base64.b64encode(fcontent.encode()).decode()
 
-@app.route("/auth/check", methods=['POST'])
-def checkAuth():
-    return {
-        'status' : auth()
-    }
-
+    #Load all templates controller files
+    template_controllers_path = templates + use_template + '/controllers/**'
+    list_template_controllers = {}
+    for path in glob.glob(template_controllers_path, recursive=True):
+        if path.endswith(".js"):
+            with open(path) as f:
+                #get file content
+                fcontent = f.read()
+                #remove relative path
+                keyn = path.replace(templates + use_template + '/controllers\\', '')
+                keyn = keyn.replace('\\', '/')
+                #pass to lists of controllers
+                list_template_controllers[keyn] = fcontent
+    return {"list_template_parts" : list_template_parts, "list_template_controllers" : list_template_controllers}
 
 #Start the app
 if __name__ == '__main__':
-    app.run(debug=True, use_debugger=False, use_reloader=False)
+    app.run()

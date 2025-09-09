@@ -24,14 +24,13 @@
         <script>{{ template_controllers[clr]|safe }}</script>
     {% endfor %}
 
-</head>
-<body>
-
     <!--Load templates-->
     {% for tpl in template_parts %}
         <script type="text/tmplt" data-name="{{ tpl }}">{{ template_parts[tpl]|safe }}</script>
     {% endfor %}
-    
+
+</head>
+<body>
     <div id="baseApp">{% block content %}{% endblock %}</div>
 
     <script>
