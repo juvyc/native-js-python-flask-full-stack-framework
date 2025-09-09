@@ -1,8 +1,7 @@
 const paths = {};
 var baseWrp = "";
 
-class baseApp
-{
+class baseApp{
     constructor(_target){
         this._target = _target;
         baseWrp = _target;
@@ -24,7 +23,21 @@ class baseApp
             }else{
                 t.innerHTML = '404 Not Found!';
             }
+
+            this.preLinks(t);
         }
+    }
+
+    //Use this to prepare all links in the document
+    preLinks(t){
+        if(!t) return false;
+        //Get all non reloadable links and use the goto function
+        t.querySelectorAll('a:not([reload])').forEach(link => {
+            link.addEventListener('click', (e) => {
+                e.preventDefault();
+                _utl.goto(e.target);
+            });
+        });
     }
 }
 

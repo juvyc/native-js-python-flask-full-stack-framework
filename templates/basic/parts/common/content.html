@@ -1,0 +1,13 @@
+<!--Do not extends on PUT method and if preLoad-->
+{% if method != 'PUT' and not preLoad %}
+    {% extends 'app.html' %}
+{% endif %}
+
+<!--Prepare content block for reloadable page-->
+{% block content %}
+    {% include 'parts/common/head.html' %}
+    <div data-container>
+        {% block data_container %}{% endblock %}
+    </div>
+    {% include 'parts/common/foot.html' %}
+{% endblock %}

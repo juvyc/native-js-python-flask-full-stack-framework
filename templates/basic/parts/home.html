@@ -1,12 +1,9 @@
-<title>Welcome to Student Portal</title>
 
-<div class="test" data-container >
-    There should be something to show up here
-</div>
+<!--Do not extends on PUT method-->
+{% if method != 'PUT' %}
+    {% extends 'parts/common/content.html' %}
+{% endif %}
 
-<br/>
-<br/>
-
-<a href="/admin/dashboard" onclick="return _utl.goto(this)">Go to Dashboard</a>
-|
-<a href="/testingpage" onclick="return _utl.goto(this)">Go to Any Page</a>
+{% block data_container %}
+    {{ home_content }}
+{% endblock %}

@@ -1,7 +1,7 @@
 import sys, os
 from conn import conn
 from flask import Flask, render_template as render, request, redirect
-import glob, hashlib, base64, datetime
+import hashlib, base64, datetime
 
 #set templates directory
 templates = "templates/"
@@ -30,7 +30,7 @@ def generate_security_salt():
     return base64.b64encode(security_salt).decode().replace('=', '')
 
 #Initialize the app using flask framework
-app = Flask(__name__, 
+app = Flask(__name__,
     template_folder=templates + use_template, #keep the folder secret
     static_folder=templates + use_template + '/assets' #keep the assets secret
 )
@@ -67,11 +67,6 @@ def route_engine(**kwargs):
     #Page title
     #params['page_title'] = "Welcome to Student Portal"
 
-    #Integrate the pre loaded templates to params
-    preLoadTmplts = preLoadedControllerTemplates(params)
-    params['template_parts'] = preLoadTmplts['list_template_parts']
-    params['template_controllers'] = preLoadTmplts['list_template_controllers']
-
     #Render dynamic template when request method is PUT
     if len(slugs) > 0:
         #print('.'.join(slugs))
@@ -99,35 +94,6 @@ def route_engine(**kwargs):
         except:
             return render('/404.html'), 404
 
-def preLoadedControllerTemplates(params={}):
-    #Load all templates parts files
-    template_parts_path = templates + use_template + '/parts/**'
-    list_template_parts = {}
-    for path in glob.glob(template_parts_path, recursive=True):
-        if path.endswith(".html"):
-            keyn = path.replace(templates + use_template + '/parts\\', '')
-            keyn = keyn.replace('\\', '/')
-            #Get file content
-            fcontent = render('parts/' + keyn, **params)
-            keyn = base64.b64encode(keyn.encode()).decode().replace('=', '')
-            #pass to lists of template parts
-            list_template_parts[keyn] = base64.b64encode(fcontent.encode()).decode()
-
-    #Load all templates controller files
-    template_controllers_path = templates + use_template + '/controllers/**'
-    list_template_controllers = {}
-    for path in glob.glob(template_controllers_path, recursive=True):
-        if path.endswith(".js"):
-            with open(path) as f:
-                #get file content
-                fcontent = f.read()
-                #remove relative path
-                keyn = path.replace(templates + use_template + '/controllers\\', '')
-                keyn = keyn.replace('\\', '/')
-                #pass to lists of controllers
-                list_template_controllers[keyn] = fcontent
-    return {"list_template_parts" : list_template_parts, "list_template_controllers" : list_template_controllers}
-
 #Start the app
 if __name__ == '__main__':
-    app.run()
+    app.run(debug=True)
